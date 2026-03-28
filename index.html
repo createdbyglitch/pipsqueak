@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipsqueak ML - Capital of France AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .training-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .training-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: #4ade80;
+            height: 30px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .loss-display {
+            font-family: monospace;
+            font-size: 1.1em;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        .test-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .test-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .test-item:hover {
+            transform: translateX(5px);
+        }
+
+        .test-question {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .test-confidence {
+            font-family: monospace;
+            padding: 4px 8px;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .test-answer {
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .answer-correct {
+            background: #4ade80;
+            color: white;
+        }
+
+        .answer-incorrect {
+            background: #f87171;
+            color: white;
+        }
+
+        .interactive-section {
+            background: #f9fafb;
+        }
+
+        .chat-area {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .user-message {
+            text-align: right;
+        }
+
+        .user-message .message-content {
+            background: #667eea;
+            color: white;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .bot-message .message-content {
+            background: #e5e7eb;
+            color: #374151;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-area button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .input-area button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .input-area button:active {
+            transform: translateY(0);
+        }
+
+        .parameters {
+            font-family: monospace;
+            font-size: 0.9em;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+
+        .param-item {
+            background: #f3f4f6;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-training {
+            background: #fbbf24;
+            color: #92400e;
+        }
+
+        .status-trained {
+            background: #4ade80;
+            color: #166534;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐭 Pipsqueak ML System</h1>
+            <p>Neural Network trained to recognize "Capital of France is Paris"</p>
+        </div>
+
+        <div class="card training-section">
+            <h2>📚 Training Phase</h2>
+            <p>Training on: <strong>"Capital of France is Paris"</strong></p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <div class="loss-display" id="lossDisplay">
+                Loss: -- | Prediction: --
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🧪 Test Results</h2>
+            <div class="test-results" id="testResults">
+                <p style="color: #9ca3af; text-align: center;">Training in progress...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Final Parameters</h2>
+            <div class="parameters" id="parameters">
+                <p style="color: #9ca3af;">Training in progress...</p>
+            </div>
+        </div>
+
+        <div class="card interactive-section">
+            <h2>💬 Interactive Mode</h2>
+            <div class="chat-area" id="chatArea">
+                <div class="message bot-message">
+                    <div class="message-content">👋 Hello! Ask me about the capital of France!</div>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Type your question... (type 'quit' to clear chat)" 
+                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" id="sendBtn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Pipsqueak {
+            constructor() {
+                this.learning_rate = 0.1;
+                this.iterations = 10000;
+                
+                this.parameters = [];
+                for(let i = 0; i < 8; i++) {
+                    this.parameters.push((Math.random() - 0.5) * 0.5);
+                }
+                
+                this.training_data = {
+                    features: this.encode_input("Capital of France"),
+                    target: 1.0
+                };
+            }
+            
+            sigmoid(x) {
+                return 1.0 / (1.0 + Math.exp(-x));
+            }
+            
+            forward_pass(features) {
+                let sum = this.parameters[7];
+                for(let i = 0; i < 7; i++) {
+                    sum += this.parameters[i] * features[i];
+                }
+                return this.sigmoid(sum);
+            }
+            
+            compute_loss(prediction, target) {
+                let eps = 1e-8;
+                prediction = Math.max(eps, Math.min(1.0 - eps, prediction));
+                return -(target * Math.log(prediction) + (1 - target) * Math.log(1 - prediction));
+            }
+            
+            compute_gradients(features, prediction, target) {
+                let gradients = new Array(8).fill(0.0);
+                let error = prediction - target;
+                
+                for(let i = 0; i < 7; i++) {
+                    gradients[i] = error * features[i];
+                }
+                gradients[7] = error;
+                
+                return gradients;
+            }
+            
+            update_parameters(gradients) {
+                for(let i = 0; i < 8; i++) {
+                    this.parameters[i] -= this.learning_rate * gradients[i];
+                }
+            }
+            
+            encode_input(text) {
+                let features = new Array(7).fill(0.0);
+                
+                let lowercase = text.toLowerCase();
+                let keywords = ["capital", "france", "paris", "french", "city", "country", "europe"];
+                
+                for(let i = 0; i < keywords.length && i < 7; i++) {
+                    if(lowercase.includes(keywords[i])) {
+                        features[i] = 1.0;
+                    }
+                }
+                
+                features[0] = lowercase.includes("capital") ? 1.0 : features[0];
+                features[1] = lowercase.includes("france") ? 1.0 : features[1];
+                features[2] = lowercase.includes("paris") ? 1.0 : features[2];
+                
+                return features;
+            }
+            
+            async train(onProgress) {
+                for(let epoch = 0; epoch < this.iterations; epoch++) {
+                    let prediction = this.forward_pass(this.training_data.features);
+                    let loss = this.compute_loss(prediction, this.training_data.target);
+                    
+                    let gradients = this.compute_gradients(this.training_data.features, prediction, this.training_data.target);
+                    this.update_parameters(gradients);
+                    
+                    if(epoch % 100 === 0) {
+                        let progress = (epoch / this.iterations) * 100;
+                        if(onProgress) {
+                            onProgress(progress, loss, prediction);
+                        }
+                        await new Promise(resolve => setTimeout(resolve, 0));
+                    }
+                }
+            }
+            
+            predict(input) {
+                let features = this.encode_input(input);
+                return this.forward_pass(features);
+            }
+            
+            answer(input) {
+                let result = this.predict(input);
+                return result > 0.5;
+            }
+            
+            get_parameters() {
+                return this.parameters;
+            }
+        }
+        
+        let ml = null;
+        let isTrained = false;
+        
+        async function startTraining() {
+            ml = new Pipsqueak();
+            
+            const progressFill = document.getElementById('progressFill');
+            const lossDisplay = document.getElementById('lossDisplay');
+            
+            await ml.train((progress, loss, prediction) => {
+                progressFill.style.width = `${progress}%`;
+                progressFill.textContent = `${Math.floor(progress)}%`;
+                lossDisplay.innerHTML = `Loss: ${loss.toFixed(6)} | Prediction: ${prediction.toFixed(6)}`;
+            });
+            
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            lossDisplay.innerHTML = `Training Complete! Final Loss: ${ml.compute_loss(ml.forward_pass(ml.training_data.features), ml.training_data.target).toFixed(6)}`;
+            
+            displayTestResults();
+            displayParameters();
+            isTrained = true;
+        }
+        
+        function displayTestResults() {
+            const testResults = document.getElementById('testResults');
+            const test_cases = [
+                "Capital of France",
+                "What is the capital of France?",
+                "France capital city",
+                "Paris is the capital of France",
+                "Capital of Germany",
+                "London is capital of England",
+                "Random question",
+                "France"
+            ];
+            
+            testResults.innerHTML = '';
+            
+            for(let test of test_cases) {
+                let confidence = ml.predict(test);
+                let is_correct = ml.answer(test);
+                
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                testItem.innerHTML = `
+                    <div class="test-question">${test}</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span class="test-confidence">${confidence.toFixed(3)}</span>
+                        <span class="test-answer ${is_correct ? 'answer-correct' : 'answer-incorrect'}">
+                            ${is_correct ? 'Paris ✓' : 'Unknown ✗'}
+                        </span>
+                    </div>
+                `;
+                testResults.appendChild(testItem);
+            }
+        }
+        
+        function displayParameters() {
+            const parametersDiv = document.getElementById('parameters');
+            const params = ml.get_parameters();
+            
+            parametersDiv.innerHTML = '';
+            for(let i = 0; i < params.length; i++) {
+                const paramItem = document.createElement('div');
+                paramItem.className = 'param-item';
+                paramItem.innerHTML = `<strong>θ${i}</strong> = ${params[i].toFixed(6)}`;
+                parametersDiv.appendChild(paramItem);
+            }
+        }
+        
+        function sendMessage() {
+            if(!isTrained) {
+                addMessage("Bot", "Please wait for training to complete first!", false);
+                return;
+            }
+            
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if(message === "") return;
+            
+            addMessage("You", message, true);
+            
+            if(message.toLowerCase() === 'quit' || message.toLowerCase() === 'exit') {
+                const chatArea = document.getElementById('chatArea');
+                chatArea.innerHTML = '';
+                addMessage("Bot", "Chat cleared! Ask me about the capital of France!", false);
+                input.value = '';
+                return;
+            }
+            
+            const isCorrect = ml.answer(message);
+            const confidence = ml.predict(message);
+            
+            setTimeout(() => {
+                if(isCorrect) {
+                    addMessage("Bot", `Paris is the capital of France! (Confidence: ${(confidence * 100).toFixed(1)}%)`, false);
+                } else {
+                    addMessage("Bot", `I don't know about that. (Confidence: ${(confidence * 100).toFixed(1)}%)`, false);
+                }
+            }, 300);
+            
+            input.value = '';
+        }
+        
+        function addMessage(sender, text, isUser) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        window.onload = () => {
+            startTraining();
+            
+            document.getElementById('userInput').addEventListener('keypress', (e) => {
+                if(e.key === 'Enter' && isTrained) {
+                    sendMessage();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
